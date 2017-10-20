@@ -36,8 +36,8 @@ public class SetTorrentIntegrationTest extends IntegrationTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         RpcConfiguration rpcConfiguration = new RpcConfiguration();
-        rpcConfiguration.setHost(URI.create("http://localhost:9091/transmission/rpc"));
-        RpcClient client = new RpcClient(rpcConfiguration, objectMapper);
+        rpcConfiguration.setHost(URI.create(nl.stil4m.transmission.Constants.TEST_URL));
+        RpcClient client = new RpcClient(rpcConfiguration, objectMapper,nl.stil4m.transmission.Constants.TEST_USER,nl.stil4m.transmission.Constants.TEST_PASSWORD);
         rpcClient = new TransmissionRpcClient(client);
 
         AddTorrentInfo addTorrentInfo = new AddTorrentInfo();

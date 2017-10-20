@@ -2,9 +2,12 @@ package nl.stil4m.transmission.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.stil4m.transmission.rpc.RpcConfiguration;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -18,6 +21,7 @@ public class RequestExecutor {
     private final HostConfiguration hostConfiguration;
     private final HttpClient httpClient;
     private final Map<String, String> headers;
+    private HttpClientContext context ;
 
     public RequestExecutor(ObjectMapper objectMapper, HostConfiguration hostConfiguration, HttpClient httpClient) {
         this.objectMapper = objectMapper;
@@ -26,7 +30,16 @@ public class RequestExecutor {
         this.headers = new HashMap<>();
     }
 
-    public void configureHeader(String name, String value) {
+    public RequestExecutor(ObjectMapper objectMapper, HostConfiguration hostConfiguration, HttpClient httpClient,
+			HttpClientContext context) {
+    	this.objectMapper = objectMapper;
+        this.hostConfiguration = hostConfiguration;
+        this.httpClient = httpClient;
+        this.headers = new HashMap<>();
+    	this.context = context;
+	}
+
+	public void configureHeader(String name, String value) {
         headers.put(name, value);
     }
 
@@ -45,7 +58,7 @@ public class RequestExecutor {
             String value = objectMapper.writeValueAsString(payLoad);
             httpPost.setEntity(new StringEntity(value, "UTF-8"));
 
-            HttpResponse result = httpClient.execute(httpPost);
+            HttpResponse result = httpClient.execute(httpPost,context);
             if (result.getStatusLine().getStatusCode() != expectedStatusCode) {
                 int statusCode = result.getStatusLine().getStatusCode();
                 EntityUtils.consume(result.getEntity());

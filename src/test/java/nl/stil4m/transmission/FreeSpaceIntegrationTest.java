@@ -24,15 +24,16 @@ import static org.mockito.AdditionalMatchers.not;
 public class FreeSpaceIntegrationTest extends IntegrationTest {
 
 
-    private TransmissionRpcClient rpcClient;
+    
+	private TransmissionRpcClient rpcClient;
 
     @Before
     public void before() throws RpcException, MalformedURLException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         RpcConfiguration rpcConfiguration = new RpcConfiguration();
-        rpcConfiguration.setHost(URI.create("http://localhost:9091/transmission/rpc"));
-        RpcClient client = new RpcClient(rpcConfiguration, objectMapper);
+        rpcConfiguration.setHost(URI.create(Constants.TEST_URL));
+        RpcClient client = new RpcClient(rpcConfiguration, objectMapper,Constants.TEST_USER,Constants.TEST_PASSWORD);
         rpcClient = new TransmissionRpcClient(client);
         pause();
     }
