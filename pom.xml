@@ -18,7 +18,6 @@
 		<integration-test.regex>(.*\.it\..*IntegrationTest.class)</integration-test.regex>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<lombok.version>1.16.12</lombok.version>
-		<sonar.login>a47e5224777b6a452deb8ed52cbe99d0e6619e13</sonar.login>
 		<sonar.projectKey>transmission-rpc</sonar.projectKey>
 	</properties>
 
