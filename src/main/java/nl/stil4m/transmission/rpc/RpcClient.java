@@ -6,6 +6,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -19,7 +20,6 @@ import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class RpcClient {
 	private HttpClientContext context = HttpClientContext.create();
 
 	public RpcClient(RpcConfiguration configuration, ObjectMapper objectMapper) {
-		this.requestExecutor = new RequestExecutor(objectMapper, configuration, defaultHttpClient,context);
+		this.requestExecutor = new RequestExecutor(objectMapper, configuration, defaultHttpClient, context);
 		this.configuration = configuration;
 		this.objectMapper = objectMapper;
 		headers = new HashMap<>();
@@ -52,7 +52,7 @@ public class RpcClient {
 	}
 
 	public RpcClient(RpcConfiguration configuration, ObjectMapper objectMapper, String username, String password) {
-		this.requestExecutor = new RequestExecutor(objectMapper, configuration, defaultHttpClient,context);
+		this.requestExecutor = new RequestExecutor(objectMapper, configuration, defaultHttpClient, context);
 		this.configuration = configuration;
 		this.objectMapper = objectMapper;
 		this.configuration.setUsername(username);
@@ -108,10 +108,11 @@ public class RpcClient {
 	private void setup() throws RpcException {
 		try {
 			if (!isBlank(configuration.getUsername()) && !isBlank(configuration.getPassword())) {
-				String auth = configuration.getUsername()+ ":" + configuration.getPassword();
-				
-				String authHeader = "Basic " + Base64.getEncoder().encodeToString(
-						  auth.getBytes(Charset.forName("ISO-8859-1")));;
+				String auth = configuration.getUsername() + ":" + configuration.getPassword();
+
+				String authHeader = "Basic "
+						+ Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
+				;
 				headers.put(HttpHeaders.AUTHORIZATION, authHeader);
 				CredentialsProvider credsProvider = new BasicCredentialsProvider();
 				credsProvider.setCredentials(
@@ -128,7 +129,7 @@ public class RpcClient {
 
 				context.setCredentialsProvider(credsProvider);
 				context.setAuthCache(authCache);
-				
+
 			}
 
 			HttpPost httpPost = createPost();
@@ -154,7 +155,10 @@ public class RpcClient {
 		execute(command, headers);
 	}
 
-	private void putSessionHeader(HttpResponse result) {
-		headers.put("X-Transmission-Session-Id", result.getFirstHeader("X-Transmission-Session-Id").getValue());
+	private void putSessionHeader(HttpResponse result) throws RpcException {
+		Header sessionHeader = result.getFirstHeader("X-Transmission-Session-Id");
+		if (sessionHeader == null)
+			throw new RpcException("Unable to get session. No header found");
+		headers.put("X-Transmission-Session-Id", sessionHeader.getValue());
 	}
 }

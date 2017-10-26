@@ -97,6 +97,11 @@
 			<artifactId>guava</artifactId>
 			<version>23.2-jre</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mock-server</groupId>
+			<artifactId>mockserver-netty</artifactId>
+			<version>3.10.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -184,8 +189,8 @@
 				<artifactId>mockserver-maven-plugin</artifactId>
 				<version>3.11</version>
 				<configuration>
-					<serverPort>1080</serverPort>
-					<proxyPort>1090</proxyPort>
+					<serverPort>1082</serverPort>
+					<proxyPort>1092</proxyPort>
 					<remoteProxyPort>9091</remoteProxyPort>
 					<remoteProxyHost>192.168.2.68</remoteProxyHost>
 					<logLevel>DEBUG</logLevel>
